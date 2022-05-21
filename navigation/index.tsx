@@ -16,6 +16,7 @@ import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from '../screens/HomeScreen';
 import PinScreen from '../screens/PinScreen';
+import CreatePinScreen from '../screens/CreatePinScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -76,9 +77,9 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="CreatePin"
-        component={HomeScreen}
+        component={CreatePinScreen}
         options={{
-          title: 'Home',
+          title: 'Create Pin',
           tabBarIcon: ({ color }) => <FontAwesome name="plus" size={30} color={color} />,
           headerTitleAlign: "center"
         }}

@@ -1,39 +1,40 @@
-import { StyleSheet, Image, ScrollView } from "react-native";
+import { StyleSheet, Image, ScrollView, useWindowDimensions } from "react-native";
+import { useState } from "react"
 
 import Pin from "./Pin";
-import { View } from "./Themed"
+import { View } from "./Themed";
 
 interface IMasonryList {
-	pins: {
-		id: string,
-		image: string,
-		title: string
-	}[]
+  pins: {
+    id: string;
+    image: string;
+    title: string;
+  }[];
 }
 const MasonryList = ({ pins }: IMasonryList) => {
-	return (
-		<ScrollView>
+  const { width } = useWindowDimensions()
+  const numColumns = Math.ceil(width / 350);
+
+  console.log(width)
+
+  return (
+    <ScrollView>
       <View style={styles.container}>
-        <View style={styles.column}>
-          {pins
-            .filter((_, index) => index % 2 === 0)
-            .map((pin) => (
-              <Pin pin={pin} key={pin.id} />
-            ))}
-        </View>
-        <View style={styles.column}>
-          {pins
-            .filter((_, index) => index % 2 !== 0)
-            .map((pin) => (
-              <Pin pin={pin} key={pin.id} />
-            ))}
-        </View>
+        {Array.from(Array(numColumns)).map((_, colIndex) => (
+          <View style={styles.column} key={colIndex}>
+            {pins
+              .filter((_, index) => index % numColumns === colIndex)
+              .map((pin) => (
+                <Pin pin={pin} key={pin.id} />
+              ))}
+          </View>
+        ))}
       </View>
     </ScrollView>
-	)
-}
+  );
+};
 
-export default MasonryList
+export default MasonryList;
 
 const styles = StyleSheet.create({
   container: {
