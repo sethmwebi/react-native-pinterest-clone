@@ -2,39 +2,79 @@ import { View, Text, StyleSheet, Image, Pressable} from "react-native";
 import { StatusBar } from "expo-status-bar"
 import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons"
-import pins from "../assets/data/pins";
 import SafeViewAndroid from "../SafeViewAndroid"
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native"
+import { useNhostClient } from "@nhost/react";
 
+const GET_PIN_QUERY = `
+	query MyQuery($id: uuid!) {
+	  pins_by_pk(id: $id) {
+	    created_at
+	    id
+	    image
+	    title
+	    user_id
+	    user {
+	      avatarUrl
+	      displayName
+	      id
+	    }
+	  }
+	}
+`
 const PinScreen = () => {
 	const [aspectRatio, setAspectRatio] = useState(1);
+	const [pin, setPin] = useState<any>(null)
+	const nhost = useNhostClient()
 
 	const route = useRoute()
 	const navigation = useNavigation()
 	const insets = useSafeAreaInsets()
 
 	const pinId = route.params?.id;
-	const pin = pins.find(p => p.id === pinId)
 
-	if(!pin){
-		return <Text>Pin not found</Text>
+	const fetchPin = async (pinId) => {
+		const response = await nhost.graphql.request(
+			GET_PIN_QUERY, {
+			id: pinId
+		});
+
+		if(response.error){
+			Alert.alert("Error fetching the pin")
+		} else {
+			setPin(response.data.pins_by_pk)
+		}
 	}
 
+
+
 	useEffect(() => {
-		if (pin?.image) {
-			Image.getSize(pin.image, (width, height) =>
-				setAspectRatio(width / height)
-			);
-		}
-	}, [pin.image]);
+		fetchPin(pinId)
+	},[pinId]);
+
+
+	// useEffect(() => {
+	// 	if (pin?.image) {
+	// 		Image.getSize(pin.image, (width, height) =>
+	// 			setAspectRatio(width / height)
+	// 		);
+	// 	}
+	// 	fetchPin()
+	// }, [pin.image]);
 
 	const goBack = () => {
 		navigation.goBack()
 	}
+
+
+  if (!pin) {
+    return <Text>Pin not found</Text>;
+  }
+
 
 	return (
 		<SafeAreaView style={{backgroundColor: "black"}}>
