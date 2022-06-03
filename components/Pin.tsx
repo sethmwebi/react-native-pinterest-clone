@@ -1,38 +1,32 @@
 import { View, Image, Text, StyleSheet, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native";
+import { useNhostClient } from "@nhost/react";
+
+import RemoteImage from "./RemoteImage"
 
 const Pin = (props) => {
 	const { id, image, title } = props.pin;
-	const [ratio, setAspectRatio] = useState(1);
-	const navigation = useNavigation()
 
-	useEffect(() => {
-		if (image) {
-			Image.getSize(image, (width, height) => setAspectRatio(width / height));
-		}
-	}, [image]);
+	const navigation = useNavigation();
 
 	const onLike = () => {};
 
 	const goToPinPage = () => {
-		navigation.navigate("Pin", { id })
+		navigation.navigate("Pin", { id });
 	};
 	return (
 		<Pressable onPress={goToPinPage} style={styles.pin}>
 			<View>
-				<Image
-					source={{
-						uri: image,
-					}}
-					style={[styles.image, { aspectRatio: ratio }]}
-				/>
+				<RemoteImage fileId={image}/>
 				<Pressable onPress={onLike} style={styles.heartBtn}>
 					<AntDesign name="hearto" size={16} color="black" />
 				</Pressable>
 			</View>
-			<Text style={styles.title} numberOfLines={2}>{title}</Text>
+			<Text style={styles.title} numberOfLines={2}>
+				{title}
+			</Text>
 		</Pressable>
 	);
 };
@@ -42,19 +36,14 @@ export default Pin;
 const styles = StyleSheet.create({
 	pin: {
 		width: "100%",
-		padding: 4
+		padding: 4,
 	},
 	title: {
 		fontSize: 16,
 		fontWeight: "500",
 		margin: 5,
 		lineHeight: 22,
-		color: "#181818"
-	},
-	image: {
-		width: "100%",
-		borderRadius: 15,
-		aspectRatio: 1 / 2,
+		color: "#181818",
 	},
 	heartBtn: {
 		backgroundColor: "#D3CFD4",
