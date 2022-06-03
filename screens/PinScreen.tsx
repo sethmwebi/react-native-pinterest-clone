@@ -9,6 +9,7 @@ import {
 } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useNhostClient } from "@nhost/react";
+import RemoteImage from "../components/RemoteImage"
 
 const GET_PIN_QUERY = `
 	query MyQuery($id: uuid!) {
